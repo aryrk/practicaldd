@@ -1,0 +1,38 @@
+version: '3.8'
+services:
+  mysql_routing:
+    image: mysql:8.0
+    container_name: mysql_routing
+    restart: always
+    environment:
+      MYSQL_DATABASE: routingmsdb
+      MYSQL_USER: routingmsdb
+      MYSQL_PASSWORD: routingmsdb
+      MYSQL_ROOT_PASSWORD: rootpassword
+    ports:
+      - "3308:3306"
+    volumes:
+      - mysql_routing_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  routingms:
+    build: .
+    container_name: routingms_app
+    ports:
+      - "8083:8083"
+    depends_on:
+      mysql_routing:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql_routing:3306/routingmsdb?zeroDateTimeBehavior=CONVERT_TO_NULL&serverTimezone=UTC&allowPublicKeyRetrieval=true&useSSL=false
+      SPRING_DATASOURCE_USERNAME: routingmsdb
+      SPRING_DATASOURCE_PASSWORD: routingmsdb
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.MySQL57Dialect
+      SPRING_JPA_GENERATE_DDL: true
+volumes:
+  mysql_routing_data:
