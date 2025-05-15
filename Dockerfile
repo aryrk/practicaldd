@@ -1,25 +1,17 @@
-# Build stage
-FROM maven:3.8.6-openjdk-11 AS builder
+FROM openjdk:8-jdk-alpine
+
 WORKDIR /app
-COPY . .
-RUN mvn clean package -DskipTests
 
-# BookingMS stage
-FROM openjdk:11-jre-slim AS bookingms
-COPY --from=builder /app/bookingms/target/*.jar /app.jar
-ENTRYPOINT ["java","-jar","/app.jar"]
+# Salin kedua JAR
+COPY bookingms/target/bookingms-1.0.jar bookingms.jar
+COPY routingms/target/routingms-1.0.jar routingms.jar
 
-# HandlingMS stage
-FROM openjdk:11-jre-slim AS handlingms
-COPY --from=builder /app/handlingms/target/*.jar /app.jar
-ENTRYPOINT ["java","-jar","/app.jar"]
+# Salin skrip helper
+COPY wait-for-it.sh wait-for-it.sh
+COPY start.sh start.sh
 
-# RoutingMS stage
-FROM openjdk:11-jre-slim AS routingms
-COPY --from=builder /app/routingms/target/*.jar /app.jar
-ENTRYPOINT ["java","-jar","/app.jar"]
+# Install bash, beri izin eksekusi
+RUN apk add --no-cache bash \
+ && chmod +x wait-for-it.sh start.sh
 
-# TrackingMS stage
-FROM openjdk:11-jre-slim AS trackingms
-COPY --from=builder /app/trackingms/target/*.jar /app.jar
-ENTRYPOINT ["java","-jar","/app.jar"]
+ENTRYPOINT ["./start.sh"]

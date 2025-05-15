@@ -64,6 +64,19 @@ public class CargoRoutingController {
         }
 
         transitPath.setTransitEdges(transitEdges);
+
+        System.out.println("Optimal Route: ");
+        System.out.println("Origin: " + originUnLocode);
+        System.out.println("Destination: " + destinationUnLocode);
+        System.out.println("Deadline: " + deadline);
+        for (TransitEdge edge : transitPath.getTransitEdges()) {
+            System.out.println("Voyage Number: " + edge.getVoyageNumber());
+            System.out.println("From: " + edge.getFromUnLocode());
+            System.out.println("To: " + edge.getToUnLocode());
+            System.out.println("From Date: " + edge.getFromDate());
+            System.out.println("To Date: " + edge.getToDate());
+        }
+
         return transitPath;
 
     }
