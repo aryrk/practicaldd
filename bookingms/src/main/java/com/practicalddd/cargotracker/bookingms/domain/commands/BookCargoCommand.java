@@ -8,17 +8,31 @@ import java.util.Date;
  */
 
 public class BookCargoCommand implements java.io.Serializable {
-    @TargetAggregateIdentifier //Identifier to indicate to Axon framework the unique instance on which the Command needs to be processed
+    private static final long serialVersionUID = 1L;
+    @TargetAggregateIdentifier // Identifier to indicate to Axon framework the unique instance on which the
+                               // Command needs to be processed
     private String bookingId;
     private int bookingAmount;
     private String originLocation;
     private String destLocation;
     private Date destArrivalDeadline;
 
-    public BookCargoCommand(){}
+    @Override
+    public String toString() {
+        return "BookCargoResource{" +
+                "bookingId='" + bookingId + '\'' +
+                ", bookingAmount=" + bookingAmount +
+                ", originLocation='" + originLocation + '\'' +
+                ", destLocation='" + destLocation + '\'' +
+                ", destArrivalDeadline=" + destArrivalDeadline +
+                '}';
+    }
+
+    public BookCargoCommand() {
+    }
 
     public BookCargoCommand(String bookingId, int bookingAmount,
-                            String originLocation, String destLocation, Date destArrivalDeadline){
+            String originLocation, String destLocation, Date destArrivalDeadline) {
         this.bookingId = bookingId;
         this.bookingAmount = bookingAmount;
         this.originLocation = originLocation;
@@ -26,32 +40,43 @@ public class BookCargoCommand implements java.io.Serializable {
         this.destArrivalDeadline = destArrivalDeadline;
     }
 
-    public void setBookingId(String bookingId){
+    public void setBookingId(String bookingId) {
         this.bookingId = bookingId;
     }
 
-    public void setBookingAmount(int bookingAmount){
+    public void setBookingAmount(int bookingAmount) {
         this.bookingAmount = bookingAmount;
     }
 
-    public String getBookingId(){
+    public String getBookingId() {
         return this.bookingId;
     }
 
-    public int getBookingAmount(){
+    public int getBookingAmount() {
         return this.bookingAmount;
     }
 
+    public String getOriginLocation() {
+        return originLocation;
+    }
 
-    public String getOriginLocation() {return originLocation; }
+    public void setOriginLocation(String originLocation) {
+        this.originLocation = originLocation;
+    }
 
-    public void setOriginLocation(String originLocation) {this.originLocation = originLocation; }
+    public String getDestLocation() {
+        return destLocation;
+    }
 
-    public String getDestLocation() { return destLocation; }
+    public void setDestLocation(String destLocation) {
+        this.destLocation = destLocation;
+    }
 
-    public void setDestLocation(String destLocation) { this.destLocation = destLocation; }
+    public Date getDestArrivalDeadline() {
+        return destArrivalDeadline;
+    }
 
-    public Date getDestArrivalDeadline() { return destArrivalDeadline; }
-
-    public void setDestArrivalDeadline(Date destArrivalDeadline) { this.destArrivalDeadline = destArrivalDeadline; }
+    public void setDestArrivalDeadline(Date destArrivalDeadline) {
+        this.destArrivalDeadline = destArrivalDeadline;
+    }
 }

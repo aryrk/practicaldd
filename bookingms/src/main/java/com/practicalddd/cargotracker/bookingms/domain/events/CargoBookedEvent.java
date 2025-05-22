@@ -8,12 +8,16 @@ import com.practicalddd.cargotracker.bookingms.domain.model.RouteSpecification;
 /**
  * Event resulting from the Cargo Booking Command
  */
-public class CargoBookedEvent
+public class CargoBookedEvent implements java.io.Serializable
 {
+    private static final long serialVersionUID = 1L;
     private String bookingId;
     private BookingAmount bookingamount;
     private Location originLocation;
     private RouteSpecification routeSpecification;
+
+    public CargoBookedEvent(){}
+
     public CargoBookedEvent(String bookingId,
                             BookingAmount bookingAmount,Location originLocation, RouteSpecification routeSpecification){
         this.bookingId = bookingId;

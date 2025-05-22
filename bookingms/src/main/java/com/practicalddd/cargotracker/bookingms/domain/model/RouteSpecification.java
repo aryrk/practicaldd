@@ -6,12 +6,13 @@ import java.util.Date;
 /**
  * Route specification of the Cargo - Origin/Destination and the Arrival Deadline
  */
-public class RouteSpecification extends Cargo {
-
+public class RouteSpecification extends Cargo implements java.io.Serializable {
+private static final long serialVersionUID = 1L;
     private Location origin;
     private Location destination;
     private Date arrivalDeadline;
 
+    public RouteSpecification() {}
 
     public RouteSpecification(Location origin, Location destination,
                               Date arrivalDeadline) {

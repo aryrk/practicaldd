@@ -12,10 +12,22 @@ public class BookCargoResource {
     private String destLocation;
     private Date destArrivalDeadline;
 
-    public BookCargoResource(){}
+    @Override
+    public String toString() {
+        return "BookCargoResource{" +
+                "bookingId='" + bookingId + '\'' +
+                ", bookingAmount=" + bookingAmount +
+                ", originLocation='" + originLocation + '\'' +
+                ", destLocation='" + destLocation + '\'' +
+                ", destArrivalDeadline=" + destArrivalDeadline +
+                '}';
+    }
+
+    public BookCargoResource() {
+    }
 
     public BookCargoResource(String bookingId, int bookingAmount,
-                             String originLocation, String destLocation, Date destArrivalDeadline){
+            String originLocation, String destLocation, Date destArrivalDeadline) {
         this.bookingId = bookingId;
         this.bookingAmount = bookingAmount;
         this.originLocation = originLocation;
@@ -23,32 +35,44 @@ public class BookCargoResource {
         this.destArrivalDeadline = destArrivalDeadline;
     }
 
-    public void setBookingId(String bookingId){
+    public void setBookingId(String bookingId) {
         this.bookingId = bookingId;
     }
 
-    public void setBookingAmount(int bookingAmount){
+    public void setBookingAmount(int bookingAmount) {
         this.bookingAmount = bookingAmount;
     }
 
-    public String getBookingId(){
+    public String getBookingId() {
         return this.bookingId;
     }
 
-    public int getBookingAmount(){
+    public int getBookingAmount() {
         return this.bookingAmount;
     }
 
-    public String getOriginLocation() {return originLocation; }
+    public String getOriginLocation() {
+        return originLocation;
+    }
 
-    public void setOriginLocation(String originLocation) {this.originLocation = originLocation; }
+    public void setOriginLocation(String originLocation) {
+        this.originLocation = originLocation;
+    }
 
-    public String getDestLocation() { return destLocation; }
+    public String getDestLocation() {
+        return destLocation;
+    }
 
-    public void setDestLocation(String destLocation) { this.destLocation = destLocation; }
+    public void setDestLocation(String destLocation) {
+        this.destLocation = destLocation;
+    }
 
-    public Date getDestArrivalDeadline() { return destArrivalDeadline; }
+    public Date getDestArrivalDeadline() {
+        return destArrivalDeadline;
+    }
 
-    public void setDestArrivalDeadline(Date destArrivalDeadline) { this.destArrivalDeadline = destArrivalDeadline; }
+    public void setDestArrivalDeadline(Date destArrivalDeadline) {
+        this.destArrivalDeadline = destArrivalDeadline;
+    }
 
 }
