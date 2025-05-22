@@ -1,0 +1,7 @@
+FROM axoniq/axonserver:latest-dev
+WORKDIR /axonserver
+
+COPY Dockerfile/Helper/axon-entrypoint.sh /axonserver/entrypoint.sh
+RUN chmod +x /axonserver/entrypoint.sh
+
+ENTRYPOINT ["/axonserver/entrypoint.sh"]

@@ -1,7 +1,8 @@
 package com.practicalddd.cargotracker.bookingms.application.internal.outboundservices.acl;
 
-
 import com.practicalddd.cargotracker.bookingms.domain.model.*;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -18,22 +19,27 @@ import java.util.Map;
 public class ExternalCargoRoutingService {
 
     /**
-     * The Booking Bounded Context makes an external call to the Routing Service of the Routing Bounded Context to
+     * The Booking Bounded Context makes an external call to the Routing Service of
+     * the Routing Bounded Context to
      * fetch the Optimal Itinerary for a Cargo based on the Route Specification
+     * 
      * @param routeSpecification
      * @return
      */
-    public CargoItinerary fetchRouteForSpecification(RouteSpecification routeSpecification){
+    @Value("${routing.service.url}")
+    private String routingServiceUrl;
+
+    public CargoItinerary fetchRouteForSpecification(RouteSpecification routeSpecification) {
 
         RestTemplate restTemplate = new RestTemplate();
-        Map<String,Object> params = new HashMap<>();
-        params.put("origin",routeSpecification.getOrigin().getUnLocCode());
-        params.put("destination",routeSpecification.getDestination().getUnLocCode());
-        params.put("deadline",routeSpecification.getArrivalDeadline().toString());
+        Map<String, Object> params = new HashMap<>();
+        params.put("origin", routeSpecification.getOrigin().getUnLocCode());
+        params.put("destination", routeSpecification.getDestination().getUnLocCode());
+        params.put("deadline", routeSpecification.getArrivalDeadline().toString());
 
-        TransitPath transitPath = restTemplate.getForObject("http://host.docker.internal:8083/cargorouting/optimalRoute?origin=&destination=&deadline=",
-                    TransitPath.class);
-
+        TransitPath transitPath = restTemplate.getForObject(
+                routingServiceUrl + "?origin={origin}&destination={destination}&deadline={deadline}",
+                TransitPath.class, params);
 
         List<Leg> legs = new ArrayList<>(transitPath.getTransitEdges().size());
         for (TransitEdge edge : transitPath.getTransitEdges()) {
@@ -45,8 +51,10 @@ public class ExternalCargoRoutingService {
     }
 
     /**
-     * Anti-corruption layer conversion method from the routing service's domain model (TransitEdges)
+     * Anti-corruption layer conversion method from the routing service's domain
+     * model (TransitEdges)
      * to the domain model recognized by the Booking Bounded Context (Legs)
+     * 
      * @param edge
      * @return
      */

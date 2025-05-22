@@ -1,38 +1,19 @@
-version: '3.8'
-
 services:
-  mysql_booking:
-    image: mysql:8.0
-    container_name: mysql_booking
+  mysql:
+    build:
+      context: .
+      dockerfile: Dockerfile/mysql-Dockerfile
+    container_name: mysql_practicalDDD
     restart: always
     environment:
-      MYSQL_DATABASE: bookingquerymsdb
-      MYSQL_USER: bookingquerymsdb
-      MYSQL_PASSWORD: bookingquerymsdb
+      MYSQL_DATABASE: practicalddd
+      MYSQL_USER: practicalddd
+      MYSQL_PASSWORD: practicalddd
       MYSQL_ROOT_PASSWORD: rootpassword
     ports:
       - "3306:3306"
     volumes:
-      - mysql_booking_data:/var/lib/mysql
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  mysql_routing:
-    image: mysql:8.0
-    container_name: mysql_routing
-    restart: always
-    environment:
-      MYSQL_DATABASE: routingmsdb
-      MYSQL_USER: routingmsdb
-      MYSQL_PASSWORD: routingmsdb
-      MYSQL_ROOT_PASSWORD: rootpassword
-    ports:
-      - "3308:3306"
-    volumes:
-      - mysql_routing_data:/var/lib/mysql
+      - mysql_data:/var/lib/mysql
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s
@@ -40,13 +21,16 @@ services:
       retries: 5
 
   axonserver:
-    image: axoniq/axonserver:latest-dev
-    container_name: axonserver
+    # image: axoniq/axonserver:latest-dev
+    build:
+      context: .
+      dockerfile: Dockerfile/axon-Dockerfile
+    container_name: axonserver_PracticalDDD
     restart: always
     ports:
-      - "8024:8024"
-      - "8124:8124"
-      - "8125:8125"
+      - "8024:8024" # HTTP dashboard
+      - "8124:8124" # gRPC API
+      - "8125:8125" # monitoring
     volumes:
       - axon_data:/axonserver/data
       - axon_events:/axonserver/events
@@ -60,48 +44,64 @@ services:
 
   prometheus:
     image: prom/prometheus:latest
-    container_name: prometheus
+    container_name: prometheus_practicalDDD
     restart: always
     ports:
       - "9090:9090"
     volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./bookingms/prometheus.yml:/etc/prometheus/prometheus.yml
     command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
+      - "--config.file=/etc/prometheus/prometheus.yml"
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:9090"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-  combinedms:
-    build: .
-    container_name: combined_ms_app
-    restart: always
+  routingms:
+    build:
+      context: .
+      dockerfile: Dockerfile/routingms-Dockerfile
+    container_name: routingms
     ports:
-      - "8081:8081"  # bookingms
-      - "8083:8083"  # routingms
+      - "8083:8083"
     depends_on:
-      mysql_booking:
+      mysql:
         condition: service_healthy
-      mysql_routing:
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/practicalddd?zeroDateTimeBehavior=convertToNull&serverTimezone=UTC&allowPublicKeyRetrieval=true&useSSL=false
+      SPRING_DATASOURCE_USERNAME: practicalddd
+      SPRING_DATASOURCE_PASSWORD: practicalddd
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.MySQL57Dialect
+      SPRING_JPA_GENERATE_DDL: true
+
+  bookingms:
+    build:
+      context: .
+      dockerfile: Dockerfile/bookingms-Dockerfile
+    container_name: bookingms
+    ports:
+      - "8081:8081"
+    depends_on:
+      mysql:
         condition: service_healthy
       axonserver:
         condition: service_healthy
     environment:
-      # BookingMS
-      BOOKING_DATASOURCE_URL: jdbc:mysql://mysql_booking:3306/bookingquerymsdb?zeroDateTimeBehavior=convertToNull&serverTimezone=UTC
-      BOOKING_DATASOURCE_USERNAME: bookingquerymsdb
-      BOOKING_DATASOURCE_PASSWORD: bookingquerymsdb
-      AXON_AXONSERVER_SERVERS: axonserver:8124
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/practicalddd?zeroDateTimeBehavior=convertToNull&serverTimezone=UTC&allowPublicKeyRetrieval=true&useSSL=false
+      SPRING_DATASOURCE_USERNAME: practicalddd
+      SPRING_DATASOURCE_PASSWORD: practicalddd
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
       SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.MySQL57Dialect
       SPRING_JPA_GENERATE_DDL: true
 
-      # RoutingMS
-      ROUTING_DATASOURCE_URL: jdbc:mysql://mysql_routing:3306/routingmsdb?zeroDateTimeBehavior=CONVERT_TO_NULL&serverTimezone=UTC&allowPublicKeyRetrieval=true&useSSL=false
-      ROUTING_DATASOURCE_USERNAME: routingmsdb
-      ROUTING_DATASOURCE_PASSWORD: routingmsdb
-      ROUTING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.MySQL57Dialect
-      ROUTING_JPA_GENERATE_DDL: true
+      AXON_AXONSERVER_SERVERS: "axonserver:8124"
+      JAVA_TOOL_OPTIONS: "-Daxon.axonserver.suppressDownloadMessage=true"
+      ROUTING_SERVICE_URL: routingms:8083/cargorouting/optimalRoute
 
 volumes:
-  mysql_booking_data:
-  mysql_routing_data:
+  mysql_data:
   axon_data:
   axon_events:
   axon_log:

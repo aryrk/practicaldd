@@ -1,5 +1,7 @@
 package com.practicalddd.cargotracker.bookingms.domain.commands;
 
+import java.io.Serializable;
+
 import org.axonframework.modelling.command.TargetAggregateIdentifier;
 
 /**
