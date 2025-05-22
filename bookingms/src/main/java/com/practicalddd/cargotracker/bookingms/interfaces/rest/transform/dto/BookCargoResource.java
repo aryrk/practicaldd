@@ -12,6 +12,8 @@ public class BookCargoResource {
     private String destLocation;
     private Date destArrivalDeadline;
 
+    public BookCargoResource(){}
+
     public BookCargoResource(String bookingId, int bookingAmount,
                              String originLocation, String destLocation, Date destArrivalDeadline){
         this.bookingId = bookingId;

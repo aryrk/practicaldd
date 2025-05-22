@@ -2,12 +2,14 @@ package com.practicalddd.cargotracker.bookingms.domain.commands;
 
 import org.axonframework.modelling.command.TargetAggregateIdentifier;
 
-public class ChangeDestinationCommand {
+public class ChangeDestinationCommand implements java.io.Serializable {
     @TargetAggregateIdentifier
     //Identifier to indicate to Axon framework the unique instance on which the Command needs to be processed
     private String bookingId;
 
     private String newDestinationLocation;
+
+    public ChangeDestinationCommand(){}
 
     public ChangeDestinationCommand(String bookingId,String newDestinationLocation){
         this.bookingId = bookingId;

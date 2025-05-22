@@ -1,17 +1,19 @@
 package com.practicalddd.cargotracker.bookingms.domain.commands;
 
-import java.io.Serializable;
 
 import org.axonframework.modelling.command.TargetAggregateIdentifier;
 
 /**
  * Implementation class for the Assign Tracking Details to Cargo Command
  */
-public class AssignTrackingDetailsToCargoCommand {
+public class AssignTrackingDetailsToCargoCommand implements java.io.Serializable {
     private String bookingId;
     @TargetAggregateIdentifier
     //Identifier to indicate to Axon framework the unique instance on which the Command needs to be processed
     private String trackingId;
+
+    public AssignTrackingDetailsToCargoCommand(){}
+
     public AssignTrackingDetailsToCargoCommand(String bookingId, String trackingId){
         this.bookingId = bookingId;
         this.trackingId = trackingId;

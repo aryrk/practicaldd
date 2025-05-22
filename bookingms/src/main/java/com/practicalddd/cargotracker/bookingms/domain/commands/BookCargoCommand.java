@@ -7,13 +7,15 @@ import java.util.Date;
  * Implementation Class for the Booking Cargo Command
  */
 
-public class BookCargoCommand {
+public class BookCargoCommand implements java.io.Serializable {
     @TargetAggregateIdentifier //Identifier to indicate to Axon framework the unique instance on which the Command needs to be processed
     private String bookingId;
     private int bookingAmount;
     private String originLocation;
     private String destLocation;
     private Date destArrivalDeadline;
+
+    public BookCargoCommand(){}
 
     public BookCargoCommand(String bookingId, int bookingAmount,
                             String originLocation, String destLocation, Date destArrivalDeadline){
