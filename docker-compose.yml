@@ -98,7 +98,8 @@ services:
 
       AXON_AXONSERVER_SERVERS: "axonserver:8124"
       JAVA_TOOL_OPTIONS: "-Daxon.axonserver.suppressDownloadMessage=true"
-      ROUTING_SERVICE_URL: routingms:8083/cargorouting/optimalRoute
+      ROUTING_SERVICE_URL: http://routingms:8083/cargorouting/optimalRoute
+      SPRING_APPLICATION_JSON: '{"routing.service.url":"http://routingms:8083/cargorouting/optimalRoute"}'
 
 volumes:
   mysql_data:
