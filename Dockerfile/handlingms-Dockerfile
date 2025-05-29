@@ -1,0 +1,15 @@
+FROM maven:3.8.5-openjdk-17 AS builder
+WORKDIR /handlingms
+COPY handlingms/ .
+RUN mvn clean package -DskipTests
+
+FROM openjdk:17-jdk-alpine
+WORKDIR /handlingms
+COPY Dockerfile/Helper/wait-for-it.sh wait-for-it.sh
+COPY --from=builder /handlingms/target/handlingms-1.0.jar handlingms.jar
+RUN apk add --no-cache bash dos2unix \
+ && dos2unix wait-for-it.sh \
+ && chmod +x wait-for-it.sh
+
+ENTRYPOINT ["./wait-for-it.sh", "mysql:3306", "--", \
+            "java", "-jar", "handlingms.jar"]
