@@ -138,6 +138,28 @@ services:
       AXON_AXONSERVER_SERVERS: "axonserver:8124"
       JAVA_TOOL_OPTIONS: "-Daxon.axonserver.suppressDownloadMessage=true"
 
+  trackingms:
+    build:
+      context: .
+      dockerfile: Dockerfile/trackingms-Dockerfile
+    container_name: trackingms
+    ports:
+      - "8084:8084"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/practicalddd?zeroDateTimeBehavior=convertToNull&serverTimezone=UTC&allowPublicKeyRetrieval=true&useSSL=false
+      SPRING_DATASOURCE_USERNAME: practicalddd
+      SPRING_DATASOURCE_PASSWORD: practicalddd
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.MySQL57Dialect
+      JAVA_TOOL_OPTIONS: "--add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.text=ALL-UNNAMED --add-opens=java.desktop/java.awt.font=ALL-UNNAMED"
+      SPRING_JPA_GENERATE_DDL: true
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+
+      AXON_AXONSERVER_SERVERS: "axonserver:8124"
+
 volumes:
   mysql_data:
   axon_data:

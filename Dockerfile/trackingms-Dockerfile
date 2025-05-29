@@ -1,0 +1,15 @@
+FROM maven:3.8.5-openjdk-17 AS builder
+WORKDIR /trackingms
+COPY trackingms/ .
+RUN mvn clean package -DskipTests
+
+FROM openjdk:17-jdk-alpine
+WORKDIR /trackingms
+COPY Dockerfile/Helper/wait-for-it.sh wait-for-it.sh
+COPY --from=builder /trackingms/target/trackingms-1.0.jar trackingms.jar
+RUN apk add --no-cache bash dos2unix \
+ && dos2unix wait-for-it.sh \
+ && chmod +x wait-for-it.sh
+
+ENTRYPOINT ["./wait-for-it.sh", "mysql:3306", "--", \
+            "java", "-jar", "trackingms.jar"]
