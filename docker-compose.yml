@@ -148,6 +148,8 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
+      axonserver:
+        condition: service_healthy
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/practicalddd?zeroDateTimeBehavior=convertToNull&serverTimezone=UTC&allowPublicKeyRetrieval=true&useSSL=false
       SPRING_DATASOURCE_USERNAME: practicalddd
